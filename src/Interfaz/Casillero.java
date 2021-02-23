@@ -19,7 +19,8 @@ public abstract class Casillero {
 	private boolean ocupado;
 	/*Hay un obstaculo cuando entidad==null y ocupado==true
 	Es vacio cuando entidad == null y ocupado == false
-	Hay un personaje cuando entidad!=null y ocupado==true*/
+	Hay un personaje cuando entidad!=null y ocupado==true
+	Ignoren el comentario de arriba creo que es mentira :v*/
 	
 	public Casillero(Posicion pos) {
 		this.pos = pos;
