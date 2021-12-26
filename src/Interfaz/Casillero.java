@@ -1,5 +1,7 @@
 package Interfaz;
 
+import java.awt.event.ActionListener;
+
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
@@ -8,7 +10,6 @@ import Logica.Controladora;
 import Logica.Entidad;
 import Logica.Juego;
 import Logica.Posicion;
-import Personajes.Pacman;
 import Personajes.Personaje;
 
 public abstract class Casillero {
@@ -17,10 +18,11 @@ public abstract class Casillero {
 	private JLabel label;
 	private Entidad entidad;
 	private boolean ocupado;
+	private String url;
 	/*Hay un obstaculo cuando entidad==null y ocupado==true
 	Es vacio cuando entidad == null y ocupado == false
 	Hay un personaje cuando entidad!=null y ocupado==true
-	Ignoren el comentario de arriba creo que es mentira :v*/
+	Ignoren el comentario de Up creo que es mentira :v*/
 	
 	public Casillero(Posicion pos) {
 		this.pos = pos;
@@ -67,18 +69,30 @@ public abstract class Casillero {
 		this.entidad=entidad;
 	}
 	
-	public void ocuparCasillero (Entidad entidad) {
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	
+	public void ocuparCasillero (Entidad entidad, String pixel) {
 		if (!(entidad instanceof Personaje)) {
 			this.ocupado=true;
 		}
 		this.setEntidad(entidad);
+		this.getLabel().setIcon(new ImageIcon(pixel));
+		this.setUrl(pixel);
 	}
 	
-	public void desocuparCasillero(boolean hayBolita) {
+	public void desocuparCasillero(boolean hayBolita, String pixel) {
 		if (!hayBolita) {
 			this.entidad=null;
 		}
 		this.ocupado=false;
+		this.getLabel().setIcon(new ImageIcon(pixel));
+		this.setUrl(pixel);
 	}
 
 	public Casillero getSig (Direccion direccion, Personaje personaje) {
@@ -89,49 +103,33 @@ public abstract class Casillero {
 		boolean exito = false;
 		if (i>0 && (i+1)<18) {
 			switch (direccion.getDireccion()) {
-				case ("Arriba"):
-					pos.actualizar(0, -1);
-					i--;
-					exito=true;
+				case ("Up"):
+					pos.actualizar(-1,0);
 					break;
-				case ("Abajo"):
-					pos.actualizar(0, 1);
-					i++;
-					exito=true;
+				case ("Down"):
+					pos.actualizar(1,0);
 					break;
 				}
 		}
 		else {
 			if (i==0) {
 				switch (direccion.getDireccion()) {
-					case ("Abajo"):
-						pos.actualizar(0, 1);
-						i++;
-						exito=true;
+					case ("Down"):
+						pos.actualizar(1,0);
 						break;
-					case ("Arriba"):
-						if (this instanceof Tunel) {
-							pos.setX(17);
-							i=17;
-							exito=true;
-						}
+					case ("Up"):
+						loop(pos);
 						break;
 				}
 			}
 			else {
 				if (i==17) {
 					switch (direccion.getDireccion()) {
-						case ("Arriba"):
-							pos.actualizar(0, -1);
-							i--;
-							exito=true;
+						case ("Up"):
+							pos.actualizar(-1,0);
 							break;
-						case ("Abajo"):
-							if (this instanceof Tunel) {
-								pos.setX(0);
-								i=0;
-								exito=true;
-							}
+						case ("Down"):
+							loop(pos);
 							break;
 					}
 				}
@@ -139,55 +137,43 @@ public abstract class Casillero {
 		}
 		if (j>0 && (j+1)<18) {
 			switch (direccion.getDireccion()) {
-				case ("Izquierda"):
-					pos.actualizar(-1, 0);
-					j--;
-					exito=true;
+				case ("Left"):
+					pos.actualizar(0,-1);
 					break;
-				case ("Derecha"):
-					pos.actualizar(1, 0);
-					j++;
-					exito=true;
+				case ("Right"):
+					pos.actualizar(0,1);
 					break;
 			}
 		}
 		else {
 			if (j==0) {
 				switch (direccion.getDireccion()) {
-					case ("Derecha"):
-						pos.actualizar(1,0);
-						exito=true;
-						j++;
+					case ("Right"):
+						pos.actualizar(0,1);
 						break;
-					case ("Izquierda"):
-						if (this instanceof Tunel) {
-							pos.setY(17);
-							j=17;
-							exito=true;
-						}
+					case ("Left"):
+						loop(pos);
 						break;
 				}
 			}
 			else {
 				if (j==17) {
 					switch (direccion.getDireccion()) {
-						case ("Izquierda"):
-							pos.actualizar(-1,0);
-							j--;
-							exito=true;
+						case ("Left"):
+							pos.actualizar(0,-1);
 							break;
-						case ("Derecha"):
-							if (this instanceof Tunel) {
-								pos.setY(0);
-								j=0;
-								exito=true;
-							}
+						case ("Right"):
+							loop(pos);
 							break;
 					}	
 				}
 			}
 		}
-		if (exito && !Juego.getCasillero(i,j).estaOcupado()) {
+		//Se almacena la próxima posición según la dirección mandada como parámetro
+		i = pos.getX();
+		j = pos.getY();
+		//Se verifica si está ocupado ese casillero
+		if (!Juego.getCasillero(i,j).estaOcupado()) {
 			respuesta=Juego.getCasillero(i,j);
 			respuesta.setPos(new Posicion(i,j));
 			exito=Controladora.hayColisiones(respuesta, personaje, direccion);
@@ -197,5 +183,7 @@ public abstract class Casillero {
 		}
 		return respuesta;
 	}
+	
+	public abstract void loop(Posicion pos);
 	
 }

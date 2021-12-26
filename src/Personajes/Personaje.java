@@ -8,13 +8,14 @@ import Interfaz.Bolita;
 import Interfaz.Casillero;
 import Interfaz.Comida;
 import Logica.Entidad;
+import Interfaz.Imagen;
 import Logica.Juego;
 import Logica.Posicion;
 
 public abstract class Personaje extends Entidad {
 	
 	private Juego juego;
-	private Direccion direccion = Direccion.Derecha;
+	private Direccion direccion;
 	private Identificador nombre;
 	private int vida=1;
 	private String [] urlImgs = new String [4];
@@ -29,34 +30,34 @@ public abstract class Personaje extends Entidad {
 		this.nombre=nombre;
 		switch (nombre.getID()) {
 			case ("Pacman"):
-				this.urlImgs[0]="pacman_right.png";
-				this.urlImgs[1]="pacman_left.png";
-				this.urlImgs[2]="pacman_down.png";
-				this.urlImgs[3]="pacman_up.png";
+				this.urlImgs[0]="img/pacman_right.png";
+				this.urlImgs[1]="img/pacman_left.png";
+				this.urlImgs[2]="img/pacman_down.png";
+				this.urlImgs[3]="img/pacman_up.png";
 				break;
 			case ("Blinky"):
-				this.urlImgs[0]="blinky_right.png";
-				this.urlImgs[1]="blinky_left.png";
-				this.urlImgs[2]="blinky_right.png";
-				this.urlImgs[3]="blinky_left.png";
+				this.urlImgs[0]="img/blinky_right.png";
+				this.urlImgs[1]="img/blinky_left.png";
+				this.urlImgs[2]="img/blinky_right.png";
+				this.urlImgs[3]="img/blinky_left.png";
 				break;
 			case ("Inky"):
-				this.urlImgs[0]="inky_right.png";
-				this.urlImgs[1]="inky_left.png";
-				this.urlImgs[2]="inky_right.png";
-				this.urlImgs[3]="inky_left.png";
+				this.urlImgs[0]="img/inky_right.png";
+				this.urlImgs[1]="img/inky_left.png";
+				this.urlImgs[2]="img/inky_right.png";
+				this.urlImgs[3]="img/inky_left.png";
 				break;
 			case ("Clyde"):
-				this.urlImgs[0]="clyde_right.png";
-				this.urlImgs[1]="clyde_left.png";
-				this.urlImgs[2]="clyde_right.png";
-				this.urlImgs[3]="clyde_left.png";
+				this.urlImgs[0]="img/clyde_right.png";
+				this.urlImgs[1]="img/clyde_left.png";
+				this.urlImgs[2]="img/clyde_right.png";
+				this.urlImgs[3]="img/clyde_left.png";
 				break;
 			case ("Pinky"):
-				this.urlImgs[0]="pinky_right.png";
-				this.urlImgs[1]="pinky_left.png";
-				this.urlImgs[2]="pinky_right.png";
-				this.urlImgs[3]="pinky_left.png";
+				this.urlImgs[0]="img/pinky_right.png";
+				this.urlImgs[1]="img/pinky_left.png";
+				this.urlImgs[2]="img/pinky_right.png";
+				this.urlImgs[3]="img/pinky_left.png";
 				break;
 		}
 	}
@@ -108,16 +109,16 @@ public abstract class Personaje extends Entidad {
 	public String getDireccionPixel (Direccion direccion) {
 		String respuesta = null;
 		switch (direccion.getDireccion()) {
-			case ("Derecha"):
+			case ("Right"):
 				respuesta=urlImgs[0];
 				break;
-			case ("Izquierda"):
+			case ("Left"):
 				respuesta=urlImgs[1];
 				break;
-			case ("Abajo"):
+			case ("Down"):
 				respuesta=urlImgs[2];
 				break;
-			case ("Arriba"):
+			case ("Up"):
 				respuesta=urlImgs[3];
 				break;
 		}
@@ -132,49 +133,23 @@ public abstract class Personaje extends Entidad {
 		Casillero casilleroAct = Juego.getCasillero(this.getPos().getX(), this.getPos().getY());
 		Casillero respuesta = casilleroAct.getSig(direccion, this);
 		if (respuesta!=null) {
-			String ant = null;
+			Imagen ant = new Imagen();
 			boolean hayBolita = false;
 			if (casilleroAct.getComida()!=null) {
-				if (casilleroAct.getComida() instanceof Bolita) {
-					Bolita bolita = (Bolita) casilleroAct.getComida();
-					if (this instanceof Fantasma) {
-						ant="puntos.png";
-					}
-					else {
-						if (this instanceof Pacman) {
-							ant="vacio.png";
-							casilleroAct.setComida(null);
-							(bolita).sumarPuntos((Pacman) this);
-						}
-					}
-				}
+				pasarPorBolita(ant);
 			}
 			else {
-				ant="vacio.png";
+				ant.setUrl("img/vacio.png");
 			}
 			this.setPos(respuesta.getPos());
-			casilleroAct.desocuparCasillero(hayBolita);
-			casilleroAct.getLabel().setIcon(new ImageIcon(ant));
+			casilleroAct.desocuparCasillero(hayBolita, ant.getUrl());
 			Casillero casilleroNue = Juego.getCasillero(this.getPos().getX(), this.getPos().getY());
-			casilleroNue.ocuparCasillero(this);
-			ImageIcon img = new ImageIcon(getDireccionPixel(direccion));
-			switch (direccion.getDireccion()) {
-				case ("Arriba"):
-					img=new ImageIcon(this.getArriba());
-					break;
-				case ("Abajo"):
-					img=new ImageIcon(this.getAbajo());
-					break;
-				case ("Izquierda"):
-					img=new ImageIcon(this.getIzquierda());
-					break;
-				case ("Derecha"):
-					img=new ImageIcon(this.getDerecha());
-					break;
-			}
-			casilleroNue.getLabel().setIcon(img);
+			casilleroNue.ocuparCasillero(this, this.getDireccionPixel(direccion));
+		
 		}
 	}
+
+	public abstract void pasarPorBolita(Imagen img);
 
 	public abstract void comenzarJugada();
 }

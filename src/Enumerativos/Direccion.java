@@ -1,7 +1,7 @@
 package Enumerativos;
 
 public enum Direccion {
-	Arriba("Arriba"), Abajo("Abajo"), Izquierda("Izquierda"), Derecha("Derecha");
+	Up("Up"), Down("Down"), Left("Left"), Right("Right");
 	private String direccion;
 	private Direccion (String direccion) {
 		this.direccion=direccion;

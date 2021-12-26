@@ -1,8 +1,5 @@
 package Interfaz;
 
-import java.awt.Graphics;
-import java.awt.Image;
-
 import Logica.Posicion;
 
 public class Vacio extends Casillero {
@@ -12,4 +9,8 @@ public class Vacio extends Casillero {
 		// TODO Auto-generated constructor stub
 	}
 
+	public void loop(Posicion pos) {
+		
+	}
+	
 }

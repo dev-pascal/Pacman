@@ -8,7 +8,10 @@ public class Obstaculo extends Casillero {
 		super(pos);
 		// TODO Auto-generated constructor stub
 	}
-
+	
+	public void loop(Posicion pos) {
+		
+	}
 
 
 }
