@@ -1,5 +1,5 @@
 # Pacman
-Juego de Pacman!
+Juego de Pacman
 
 Abrir el ejecutable juego.jar para comenzar el juego.
 Haz que Pacman recoja toda la comida del nivel para ganar. 
